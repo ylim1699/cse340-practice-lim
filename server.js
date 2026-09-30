@@ -1,12 +1,26 @@
 import express from 'express';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PORT = process.env.PORT || 3000;
 
 const app = express();
-const PORT = 3000;
 
-const name = process.env.NAME;
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.get('/', (req, res) => {
-    res.send(`Hello, ${name}`);
+    res.sendFile(path.join(__dirname, 'src/views/home.html'));
+});
+
+app.get ('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/views/about.html'));
+});
+
+app.get ('/products', (req, res) => {
+    res.sendFile(path.join(__dirname, 'src/views/products.html'));
 });
 
 app.listen(PORT, () => {
