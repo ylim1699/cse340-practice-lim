@@ -4,13 +4,19 @@ import path from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 const PORT = process.env.PORT || 3000;
+const NODE_ENV = process.env.NODE_ENV || 'production';
 
 const app = express();
 
+//middleware
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.set('view engine', 'ejs');
+app.set('vews', path.join(__dirname, 'src/views'));
 
+// Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'src/views/home.html'));
 });
