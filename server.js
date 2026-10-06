@@ -11,10 +11,16 @@ const NODE_ENV = process.env.NODE_ENV || 'production';
 const app = express();
 
 //middleware
-app.use(express.static(path.join(__dirname, 'public')));
-
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((req, res, next) => {
+    res.locals.NODE_ENV = NODE_ENV.toLowerCase() || 'production';
+
+    next();
+});
 
 // Routes
 app.get('/', (req, res) => {
