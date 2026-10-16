@@ -105,6 +105,14 @@ app.use((req, res, next) => {
     next();
 })
 
+// route specific middleware
+const addDemoHeaders = ((req, res, next) => {
+    res.setHeader('X-Demo-Page', 'true');
+    res.setHeader('X-Middleware-Demo', 'This is a demo');
+
+    next();
+});
+
 // Routes
 app.get('/', (req, res) => {
     const title = 'Welcome Home';
@@ -172,6 +180,12 @@ app.get('/catalog/:courseId', (req, res, next) => {
         title: `${course.id} - ${course.title}`,
         course: { ...course, sections: sortedSections },
         currentSort: sortBy
+    });
+});
+
+app.get('/demo', addDemoHeaders, (req, res) => {
+    res.render('demo', {
+        title: 'Middleware Demo Page'
     });
 });
 
