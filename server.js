@@ -49,17 +49,61 @@ const NODE_ENV = process.env.NODE_ENV || 'production';
 
 const app = express();
 
-//middleware
+// General Middleware
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// defining runtime mode 
 app.use((req, res, next) => {
     res.locals.NODE_ENV = NODE_ENV.toLowerCase() || 'production';
 
     next();
 });
+
+// global data to add to all templates
+app.use((req, res, next) => {
+    // Add current year for copyright
+    res.locals.currentYear = new Date().getFullYear();
+
+    next();
+});
+
+// time-based greeting
+app.use((req, res, next) => {
+    const currentHour = new Date().getHours();
+
+    if (currentHour < 12) {
+        res.locals.greeting = 'Good Morning!';
+    } else if (currentHour >= 12 && currentHour <= 17) {
+        res.locals.greeting = 'Good Afternoon!';
+    } if (currentHour > 17) {
+        res.locals.greeting = 'Good Evening!';
+    };
+
+    next();
+});
+
+// random color theme
+app.use((req, res, next) => {
+    const colors = ['blue-theme', 'green-theme', 'red-theme'];
+
+    const range = Math.floor(Math.random() * colors.length);
+    const randomTheme = colors[range];
+    res.locals.bodyClass = randomTheme;
+
+    next();
+});
+
+// Global middleware to share query parameters with templates
+app.use((req, res, next) => {
+    res.locals.queryParams = req.query || {};
+
+    next();
+})
 
 // Routes
 app.get('/', (req, res) => {
@@ -84,12 +128,61 @@ app.get ('/error-testing', (req, res, next) => {
     next(err);
 })
 
+app.get ('/catalog', (req, res) => {
+    res.render('catalog', {
+        title: 'Course Catalog',
+        courses: courses
+    });
+});
+
+// Enhanced course detail route with sorting
+app.get('/catalog/:courseId', (req, res, next) => {
+    const courseId = req.params.courseId;
+    const course = courses[courseId];
+
+    if (!course) {
+        const err = new Error(`Course ${courseId} not found`);
+        err.status = 404;
+        return next(err);
+    }
+
+    // Get sort parameter (default to 'time')
+    const sortBy = req.query.sort || 'time';
+
+    // Create a copy of sections to sort
+    let sortedSections = [...course.sections];
+
+    // Sort based on the parameter
+    switch (sortBy) {
+        case 'professor':
+            sortedSections.sort((a, b) => a.professor.localeCompare(b.professor));
+            break;
+        case 'room':
+            sortedSections.sort((a, b) => a.room.localeCompare(b.room));
+            break;
+        case 'time':
+        default:
+            // Keep original time order as default
+            break;
+    }
+
+    console.log(`Viewing course: ${courseId}, sorted by: ${sortBy}`);
+
+    res.render('course-detail', {
+        title: `${course.id} - ${course.title}`,
+        course: { ...course, sections: sortedSections },
+        currentSort: sortBy
+    });
+});
+
+// catch-all error middleware
 app.use((req, res, next) => {
     const err = new Error('Page Not Found');
     err.status = 404;
     next(err);
 });
 
+// global error middleware
 app.use((err, req, res, next) => {
     // prevents infinite loops, if a response has alraedy been sent, do nothing
     if (res.headersSent || res.finished) {
