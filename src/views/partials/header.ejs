@@ -25,7 +25,7 @@
   </head>
   <body class="<%= bodyClass %>">
     <header>
-      <h1><%= greeting %></h1>
+      <h1><%= greeting || ''%></h1>
       <%- include('navigation') %>
     </header>
   </body>
