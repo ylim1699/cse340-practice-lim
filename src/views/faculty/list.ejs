@@ -1,0 +1,16 @@
+<%- include('../partials/header') %>
+<main>
+    <h1>Faculty List</h1>
+    <p>Browse our faculty and click on any to see detailed information.</p>
+
+    <div class="course-list">
+        <% Object.entries(faculty).forEach(([id, member]) => { %>
+            <div class="course-card">
+                <h3><a href="/faculty/<%= id %>"><%= member.department %></a></h3>
+                <p class="course-id"><%= member.name %></p>
+                <p class="course-description"><%= member.title %></p>
+            </div>
+        <% }); %>
+    </div>
+</main>
+<%- include('../partials/footer') %>
