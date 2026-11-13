@@ -31,7 +31,7 @@
                 <div class="section-card">
                     <div class="section-time"><%= section.time %></div>
                     <div class="section-room">Room: <%= section.room %></div>
-                    <div class="section-professor">Instructor: <%= section.professor %></div>
+                    <div class="section-professor">Instructor: <a href="/faculty/<%= section.professor.toLowerCase().replace(/ /g, '-') %>"><%= section.professor %></a></div>
                 </div>
             <% }); %>
         </div>
