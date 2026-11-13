@@ -18,6 +18,7 @@ router.get('/catalog/:courseId', courseDetailPage);
 
 // faculty pages
 router.get('/faculty', facultyListPage);
+router.get('/faculty/:facultyId', facultyDetailPage);
 
 // Demo page with special middleware
 router.get('/demo', addDemoHeaders, demoPage);

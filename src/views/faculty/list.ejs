@@ -1,13 +1,20 @@
 <%- include('../partials/header') %>
 <main>
-    <h1>Faculty List</h1>
+    <h1><%= title %></h1>
     <p>Browse our faculty and click on any to see detailed information.</p>
 
+    <div class="sort-options">
+        <span>Sort by: </span>
+        <a href="/faculty?sort=name" class="<%= currentSort === 'name' ? 'active' : '' %>">Name</a>
+        <a href="/faculty?sort=department" class="<%= currentSort === 'department' ? 'active' : '' %>">Department</a>
+        <a href="/faculty?sort=title" class="<%= currentSort === 'title' ? 'active' : '' %>">Title</a>
+    </div>
+
     <div class="course-list">
-        <% Object.entries(faculty).forEach(([id, member]) => { %>
+        <% faculty.forEach(member => { %>
             <div class="course-card">
-                <h3><a href="/faculty/<%= id %>"><%= member.department %></a></h3>
-                <p class="course-id"><%= member.name %></p>
+                <h3><a href="/faculty/<%= member.id %>"><%= member.name %></a></h3>
+                <p class="course-id"><%= member.department %></p>
                 <p class="course-description"><%= member.title %></p>
             </div>
         <% }); %>
