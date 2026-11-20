@@ -11,6 +11,25 @@ export const getCurrentGreeting = () => {
     };
 };
 
+export const setHeadAssetsFunctionality = (res) => {
+    res.locals.styles = [];
+    res.locals.scripts = [];
+
+    res.addStyle = (css, priority = 0) => {
+        res.locals.styles.push({ content: css, priority });
+    };
+
+    res.addScript = (js, priority = 0) => {
+        res.locals.scripts.push({ content: js, priority });
+    };
+    
+    res.locals.renderStyles = () => {
+        return res.locals.styles
+            .sort((a, b) => b.priority - a.priority)
+            .map(item => item.content)
+            .join('\n');
+    }
+};
 
 export const addLocalVariables = (req, res, next) => {
     // runtime mode
@@ -34,3 +53,4 @@ export const addLocalVariables = (req, res, next) => {
 
     next();
 };
+

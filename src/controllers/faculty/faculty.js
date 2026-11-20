@@ -1,8 +1,8 @@
-import { getFacultyById, getSortedFaculty } from "../../models/faculty/faculty.js";
+import { getFacultyBySlug, getSortedFaculty } from "../../models/faculty/faculty.js";
 
 // Include proper error handling for invalid faculty IDs
 
-const facultyListPage = (req, res) => {
+const facultyListPage = async (req, res) => {
 // function that renders the faculty list page
 const sortBy = req.query.sort || 'name';
 const facultyList = getSortedFaculty(sortBy);
@@ -13,12 +13,12 @@ const facultyList = getSortedFaculty(sortBy);
     });
 };
 
-const facultyDetailPage = (req, res, next) => {
-    const facultyId = req.params.facultyId;
-    const member = getFacultyById(facultyId);
+const facultyDetailPage = async (req, res, next) => {
+    const facultySlug = req.params.facultySlug;
+    const member = getFacultyById(facultySlug);
 
-    if (!member) {
-        const err = new Error(`Faculty member ${facultyId} not found`);
+    if (Object.key(member).length === 0) {
+        const err = new Error(`Faculty member ${facultySlug} not found`);
         err.status = 404;
         return next(err);
     }
